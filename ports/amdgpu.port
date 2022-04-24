@@ -1,9 +1,0 @@
-LICENSE          := GPLv2
-VERSION          := 5.11.11
-DOWNLOADS        := amdgpu.archive
-
-URL(amdgpu)      := https://www.kernel.org/pub/linux/kernel/v5.x/linux-$(VERSION).tar.xz
-SHA(amdgpu)      := 0a7875613823a57e7f9a937eb0ff098cbd8a2ff0d93e18171b8afeac09f583b9
-DIR(amdgpu)      := src/drivers/amdgpu
-
-# vi: set ft=make :
