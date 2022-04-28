@@ -36,9 +36,29 @@ ifeq ($(wildcard $(LX_SRC_DIR)),)
 fail
 endif
 
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/i915
+INC_DIR    += $(LX_SRC_DIR)/arch/x86/include/
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/acp/include
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/amdgpu
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/amdkfd
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/amdgpu_dm
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/dc
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/dc/inc
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/dc/inc/hw
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/dmub/inc
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/include
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/modules/hdcp
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/modules/inc
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/include
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/include/asic_reg
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/pm/inc
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/pm/powerplay/hwmgr
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/pm/swsmu/smu11
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/pm/swsmu/smu12
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/pm/swsmu/smu13
 
-CC_C_OPT   += -Wno-unused-label -fshort-wchar
+CC_C_OPT   += -Wno-unused-label -fshort-wchar -DCONFIG_MTRR -DCONFIG_X86_PAT -DCONFIG_X86_64
+CC_OPT     := $(CC_C_OPT)
 
 #
 # Original symbol is renamed to __real_* and references to original symbol

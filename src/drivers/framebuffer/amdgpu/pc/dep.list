@@ -606,7 +606,6 @@ include/linux/debugobjects.h
 include/linux/delay.h
 include/linux/delayacct.h
 include/linux/delayed_call.h
-include/linux/dev_printk.h
 include/linux/device.h
 include/linux/device/bus.h
 include/linux/device/class.h
