@@ -1,0 +1,126 @@
+
+create_boot_directory
+
+
+set depot_packages { }
+lappend depot_packages [depot_user]/src/[base_src]
+lappend depot_packages [depot_user]/src/acpi_drv
+lappend depot_packages [depot_user]/src/init
+lappend depot_packages [depot_user]/src/platform_drv
+lappend depot_packages [depot_user]/src/report_rom
+
+
+import_from_depot $depot_packages
+
+
+set build_components {
+	app/pci_decode
+	drivers/nic/intel_igc/pc
+}
+
+build $build_components
+
+
+set config {
+<config>
+	<parent-provides>
+		<service name="CPU"/>
+		<service name="IO_MEM"/>
+		<service name="IRQ"/>
+		<service name="LOG"/>
+		<service name="PD"/>
+		<service name="RM"/>
+		<service name="ROM"/>
+	</parent-provides>
+
+	<default-route>
+		<any-service> <parent/> </any-service>
+	</default-route>
+
+	<start name="timer" caps="60">
+		<provides>
+			<service name="Timer"/>
+		</provides>
+		<resource name="RAM" quantum="1M"/>
+	</start>
+
+	<start name="report_rom" caps="300">
+		<resource name="RAM" quantum="2M"/>
+		<provides>
+			<service name="ROM"/>
+			<service name="Report"/>
+		</provides>
+		<config verbose="no">
+			<policy label="pci_decode -> system"    report="acpi_drv -> acpi"/>
+			<policy label="platform_drv -> acpi"    report="acpi_drv -> acpi"/>
+			<policy label="platform_drv -> devices" report="pci_decode -> devices"/>
+		</config>
+	</start>
+
+	<start name="acpi_drv" caps="300">
+		<resource name="RAM" quantum="4M"/>
+		<provides>
+			<service name="Acpi"/>
+		</provides>
+		<route>
+			<service name="Report"> <child name="report_rom"/> </service>
+			<any-service> <parent/> </any-service>
+		</route>
+	</start>
+
+	<start name="platform_drv" caps="300" managing_system="yes">
+		<binary name="legacy_pc_platform_drv"/>
+		<resource name="RAM" quantum="4M"/>
+		<provides>
+			<service name="Platform"/>
+		</provides>
+		<config devices="config">
+			<report pci="yes" config="yes" devices="yes"/>
+			<policy label="nic_drv -> ">
+				<pci class="ETHERNET"/>
+				<pci vendor="0x8086" device="0x43ed"/>
+			</policy>
+		</config>
+		<route>
+			<service name="Acpi">                <child name="acpi_drv"/> </service>
+			<service name="ROM" label="acpi">    <child name="report_rom"/> </service>
+			<service name="ROM" label="devices"> <child name="report_rom"/> </service>
+			<service name="Report">              <child name="report_rom"/> </service>
+			<service name="Timer">               <child name="timer"/> </service>
+			<any-service> <parent/> </any-service>
+		</route>
+	</start>
+
+	<start name="pci_decode" caps="300">
+		<resource name="RAM" quantum="4M"/>
+		<route>
+			<service name="ROM" label="system"> <child name="report_rom"/> </service>
+			<service name="Report">             <child name="report_rom"/> </service>
+			<any-service> <parent/> </any-service>
+		</route>
+	</start>
+
+	<start name="nic_drv" caps="300">
+		<binary name="pc_intel_igc_nic_drv"/>
+		<resource name="RAM" quantum="8M"/>
+		<config ld_verbose="yes"/>
+		<route>
+			<service name="Platform"> <child name="platform_drv"/> </service>
+			<any-service> <parent/> </any-service>
+		</route>
+	</start>
+
+</config>
+}
+
+
+install_config $config
+
+
+build_boot_image {
+	pc_intel_igc_nic_drv
+	pci_decode
+}
+
+
+run_genode_until forever
