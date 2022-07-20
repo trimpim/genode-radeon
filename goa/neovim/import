@@ -1,0 +1,10 @@
+LICENSE   := Apache 2.0 license
+VERSION   := v0.8.2
+
+DOWNLOADS := neovim.archive
+
+URL(neovim) := https://github.com/neovim/neovim/archive/refs/tags/$(VERSION).tar.gz
+DIR(neovim) := src
+SHA(neovim) := c516c8db73e1b12917a6b2e991b344d0914c057cef8266bce61a2100a28ffcc9
+
+# vim: ft=make

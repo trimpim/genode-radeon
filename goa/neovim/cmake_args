@@ -1,0 +1,2 @@
+-DCMAKE_BUILD_TYPE:string=Release
+-DCMAKE_USE_OPENSSL:bool=true
