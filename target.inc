@@ -1,0 +1,2 @@
+# support intel IGC network drivers
+LX_ENABLE += NET_VENDOR_INTEL IGC ETHERNET CONFIG_PRINTK

@@ -4,30 +4,38 @@ TARGET      := pc_intel_igc_nic_drv
 
 LIBS        := base
 LIBS        += pc_lx_emul
+LIBS        += jitterentropy
 
 REL_PRG_DIR := $(realpath $(PRG_DIR)/../..)
 PC_DIR      := $(realpath $(dir $(call select_from_repositories,src/include/lx_emul/initcall_order.h))/../../..)
 DDE_DIR     := $(realpath $(dir $(call select_from_repositories,src/lib/lxip/include/nic.h))/../../../..)
 OS_DIR      := $(realpath $(dir $(call select_from_repositories,src/lib/genode_c_api/uplink.cc))/../../..)
-LX_SRC_DIR  := $(call select_from_ports,linux)/src/linux
+#LX_SRC_DIR  := $(call select_from_ports,linux)/src/linux
 
 
 INC_DIR     += $(REL_PRG_DIR)
+INC_DIR     += $(REL_PRG_DIR)/shadow
+INC_DIR     += $(PC_DIR)/arch/x86/include
 INC_DIR     += $(PC_DIR)/src/include
 INC_DIR     += $(DDE_DIR)/src/include
-INC_DIR     += $(LX_SRC_DIR)/drivers/net/ethernet/intel/igc
+#INC_DIR     += $(DDE_DIR)/src/include/lx_emul/shadow
+#INC_DIR     += $(LX_SRC_DIR)/drivers/net/ethernet/intel/igc
+
+#all:
+#	@echo " >>>>>>>> $(INC_DIR)"
+#	@exit 0
 
 
-SRC_CC      += component.cc
-#SRC_CC      += socket_call.cc
+SRC_CC      := component.cc
 
 SRC_C       += generated_dummies.c
 SRC_C       += dummies.c
-SRC_C       += timeout.c
 SRC_C       += uplink.c
 SRC_C       += lx_user.c
 SRC_C       += lx_socket_call.c
-#SRC_C       += lx_emul.c
+
+SRC_CC  += time.cc
+#SRC_CC  += opregion_io_mem.cc
 
 # lx_emul sources
 SRC_C   += lx_emul/common_dummies.c
@@ -35,9 +43,13 @@ SRC_C   += lx_emul/spec/x86/pci.c
 SRC_C   += lx_emul/shadow/mm/page_alloc.c
 SRC_C   += lx_emul/shadow/drivers/char/random.c
 
+
+#SRC_C       += lx_emul.c
+#SRC_CC      += socket_call.cc
+#SRC_C       += timeout.c
+
 # Genode C-API backends sources
 SRC_CC  += genode_c_api/uplink.cc
-
 
 # sources from program directory
 vpath %.c  $(REL_PRG_DIR)
@@ -56,13 +68,13 @@ vpath %.cc $(OS_DIR)/src/lib
 
 
 CC_C_OPT += -Wno-unused-label
-CC_OPT_lx_socket_call += -DKBUILD_MODNAME='"lx_socket_call"'
+#CC_OPT_lx_socket_call += -DKBUILD_MODNAME='"lx_socket_call"'
 
 
 #
 # Original symbol is renamed to __real_* and references to original symbol
 # are replaced by __wrap_*. Used to shadow schedule_timeout, see timeout.c
 #
-LD_OPT += --wrap=schedule_timeout
+#LD_OPT += --wrap=schedule_timeout
 
 # vim : ft=make

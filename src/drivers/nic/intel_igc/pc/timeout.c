@@ -28,6 +28,6 @@ signed long __real_schedule_timeout(signed long timeout);
 
 signed long __wrap_schedule_timeout(signed long timeout)
 {
-	lx_emul_force_jiffies_update();
+//	lx_emul_force_jiffies_update();
 	return __real_schedule_timeout(timeout);
 }
