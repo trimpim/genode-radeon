@@ -20,12 +20,12 @@
 //#include <linux/netdevice.h>
 //#include <linux/sched.h>
 
-/* lx_emul includes */
+/* emulation includes */
 #include <lx_emul/init.h>
 #include <lx_emul/task.h>
 #include <lx_kit/env.h>
 #include <lx_kit/init.h>
-#include <lx_user/init.h>
+//#include <lx_user/init.h>
 
 /* Genode C-API includes */
 #include <genode_c_api/uplink.h>

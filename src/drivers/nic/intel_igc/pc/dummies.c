@@ -15,6 +15,6 @@
 
 #include <lx_emul/debug.h>
 #include <linux/math64.h>
-#include <linux/jump_label.h>
+//#include <linux/jump_label.h>
 
-struct static_key_false init_on_alloc;
+//struct static_key_false init_on_alloc;

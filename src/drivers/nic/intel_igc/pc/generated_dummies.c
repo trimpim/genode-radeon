@@ -1,7 +1,7 @@
 /*
  * \brief  Dummy definitions of Linux Kernel functions
  * \author Automatically generated file - do no edit
- * \date   2022-09-25
+ * \date   2022-10-25
  */
 
 #include <lx_emul.h>
@@ -18,6 +18,22 @@ void * PDE_DATA(const struct inode * inode)
 #include <linux/ratelimit_types.h>
 
 int ___ratelimit(struct ratelimit_state * rs,const char * func)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <linux/filter.h>
+
+noinline u64 __bpf_call_base(u64 r1,u64 r2,u64 r3,u64 r4,u64 r5)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <linux/filter.h>
+
+void __bpf_prog_free(struct bpf_prog * fp)
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -58,6 +74,22 @@ unsigned long __fdget(unsigned int fd)
 #include <linux/file.h>
 
 int __get_unused_fd_flags(unsigned flags,unsigned long nofile)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <net/netlink.h>
+
+int __nla_parse(struct nlattr ** tb,int maxtype,const struct nlattr * head,int len,const struct nla_policy * policy,unsigned int validate,struct netlink_ext_ack * extack)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <net/netlink.h>
+
+int __nla_validate(const struct nlattr * head,int len,int maxtype,const struct nla_policy * policy,unsigned int validate,struct netlink_ext_ack * extack)
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -222,6 +254,79 @@ struct file * alloc_file_pseudo(struct inode * inode,struct vfsmount * mnt,const
 }
 
 
+#include <linux/bpf.h>
+
+const struct bpf_func_proto bpf_get_current_comm_proto;
+
+
+#include <linux/bpf.h>
+
+const struct bpf_func_proto bpf_get_current_pid_tgid_proto;
+
+
+#include <linux/bpf.h>
+
+const struct bpf_func_proto bpf_get_current_uid_gid_proto;
+
+
+#include <linux/bpf.h>
+
+const struct bpf_func_proto bpf_get_local_storage_proto;
+
+
+#include <linux/bpf.h>
+
+const struct bpf_func_proto bpf_get_smp_processor_id_proto;
+
+
+#include <linux/filter.h>
+
+void * bpf_internal_load_pointer_neg_helper(const struct sk_buff * skb,int k,unsigned int size)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <linux/filter.h>
+
+struct bpf_prog * bpf_prog_alloc(unsigned int size,gfp_t gfp_extra_flags)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <linux/filter.h>
+
+void bpf_prog_free(struct bpf_prog * fp)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <linux/filter.h>
+
+struct bpf_prog * bpf_prog_realloc(struct bpf_prog * fp_old,unsigned int size,gfp_t gfp_extra_flags)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <linux/filter.h>
+
+struct bpf_prog * bpf_prog_select_runtime(struct bpf_prog * fp,int * err)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <linux/bpf.h>
+
+void bpf_user_rnd_init_once(void)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
 #include <linux/kernel.h>
 
 void bust_spinlocks(int yes)
@@ -251,9 +356,9 @@ void console_unblank(void)
 }
 
 
-#include <linux/pm_qos.h>
+#include <asm-generic/checksum.h>
 
-void cpu_latency_qos_add_request(struct pm_qos_request * req,s32 value)
+__wsum csum_partial(const void * buff,int len,__wsum sum)
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -278,6 +383,30 @@ int dev_ioctl(struct net * net,unsigned int cmd,struct ifreq * ifr,bool * need_c
 #include <linux/netdevice.h>
 
 int __init dev_proc_init(void)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <linux/dynamic_queue_limits.h>
+
+void dql_completed(struct dql * dql,unsigned int count)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <linux/dynamic_queue_limits.h>
+
+void dql_init(struct dql * dql,unsigned int hold_time)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <linux/dynamic_queue_limits.h>
+
+void dql_reset(struct dql * dql)
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -726,6 +855,70 @@ struct inode * new_inode_pseudo(struct super_block * sb)
 }
 
 
+#include <net/netlink.h>
+
+struct nlattr * nla_find(const struct nlattr * head,int len,int attrtype)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <net/netlink.h>
+
+int nla_memcpy(void * dest,const struct nlattr * src,int count)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <net/netlink.h>
+
+int nla_put(struct sk_buff * skb,int attrtype,int attrlen,const void * data)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <net/netlink.h>
+
+int nla_put_64bit(struct sk_buff * skb,int attrtype,int attrlen,const void * data,int padattr)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <net/netlink.h>
+
+struct nlattr * nla_reserve(struct sk_buff * skb,int attrtype,int attrlen)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <net/netlink.h>
+
+struct nlattr * nla_reserve_64bit(struct sk_buff * skb,int attrtype,int attrlen,int padattr)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <net/netlink.h>
+
+char * nla_strdup(const struct nlattr * nla,gfp_t flags)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <net/netlink.h>
+
+ssize_t nla_strscpy(char * dst,const struct nlattr * nla,size_t dstsize)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
 #include <linux/irq.h>
 
 struct irq_chip no_irq_chip;
@@ -781,14 +974,9 @@ void page_frag_free(void * addr)
 enum reboot_mode panic_reboot_mode;
 
 
-#include <linux/pci-acpi.h>
-
-const guid_t pci_acpi_dsm_guid;
-
-
 #include <linux/pci.h>
 
-void pci_assign_unassigned_bridge_resources(struct pci_dev * bridge)
+bool pci_device_is_present(struct pci_dev * pdev)
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -796,14 +984,7 @@ void pci_assign_unassigned_bridge_resources(struct pci_dev * bridge)
 
 #include <linux/pci.h>
 
-void pci_assign_unassigned_bus_resources(struct pci_bus * bus)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-extern unsigned long pci_cardbus_resource_alignment(struct resource * res);
-unsigned long pci_cardbus_resource_alignment(struct resource * res)
+void pci_disable_device(struct pci_dev * dev)
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -811,19 +992,7 @@ unsigned long pci_cardbus_resource_alignment(struct resource * res)
 
 #include <linux/pci.h>
 
-unsigned int pci_flags;
-
-
-#include <linux/pci.h>
-
-struct irq_domain * pci_host_bridge_acpi_msi_domain(struct pci_bus * bus)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-extern int pci_idt_bus_quirk(struct pci_bus * bus,int devfn,u32 * l,int timeout);
-int pci_idt_bus_quirk(struct pci_bus * bus,int devfn,u32 * l,int timeout)
+int pci_enable_device_mem(struct pci_dev * dev)
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -831,28 +1000,7 @@ int pci_idt_bus_quirk(struct pci_bus * bus,int devfn,u32 * l,int timeout)
 
 #include <linux/pci.h>
 
-int pci_mmap_resource_range(struct pci_dev * pdev,int bar,struct vm_area_struct * vma,enum pci_mmap_state mmap_state,int write_combine)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-extern void __init pci_realloc_get_opt(char * str);
-void __init pci_realloc_get_opt(char * str)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-extern void pci_restore_vc_state(struct pci_dev * dev);
-void pci_restore_vc_state(struct pci_dev * dev)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-extern int pci_save_vc_state(struct pci_dev * dev);
-int pci_save_vc_state(struct pci_dev * dev)
+int pci_enable_wake(struct pci_dev * pci_dev,pci_power_t state,bool enable)
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -860,50 +1008,63 @@ int pci_save_vc_state(struct pci_dev * dev)
 
 #include <linux/pci.h>
 
-void pci_stop_and_remove_bus_device_locked(struct pci_dev * dev)
+void pci_release_selected_regions(struct pci_dev * pdev,int bars)
 {
 	lx_emul_trace_and_stop(__func__);
 }
 
 
-extern void pci_vpd_release(struct pci_dev * dev);
-void pci_vpd_release(struct pci_dev * dev)
+#include <linux/pci.h>
+
+int pci_request_selected_regions(struct pci_dev * pdev,int bars,const char * res_name)
 {
 	lx_emul_trace_and_stop(__func__);
 }
 
 
-extern unsigned int pcibios_assign_all_busses(void);
-unsigned int pcibios_assign_all_busses(void)
+#include <linux/pci.h>
+
+void pci_restore_state(struct pci_dev * dev)
 {
 	lx_emul_trace_and_stop(__func__);
 }
 
 
-extern void pcie_aspm_init_link_state(struct pci_dev * pdev);
-void pcie_aspm_init_link_state(struct pci_dev * pdev)
+#include <linux/pci.h>
+
+int pci_save_state(struct pci_dev * dev)
 {
 	lx_emul_trace_and_stop(__func__);
 }
 
 
-extern void pcie_aspm_pm_state_change(struct pci_dev * pdev);
-void pcie_aspm_pm_state_change(struct pci_dev * pdev)
+#include <linux/pci.h>
+
+int pci_select_bars(struct pci_dev * dev,unsigned long flags)
 {
 	lx_emul_trace_and_stop(__func__);
 }
 
 
-extern void pcie_aspm_powersave_config_link(struct pci_dev * pdev);
-void pcie_aspm_powersave_config_link(struct pci_dev * pdev)
+#include <linux/pci.h>
+
+int pci_set_power_state(struct pci_dev * dev,pci_power_t state)
 {
 	lx_emul_trace_and_stop(__func__);
 }
 
 
-#include <linux/pci_hotplug.h>
+#include <linux/pci.h>
 
-bool pciehp_is_native(struct pci_dev * bridge)
+int pci_wake_from_d3(struct pci_dev * dev,bool enable)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <linux/pci.h>
+
+void pcie_print_link_status(struct pci_dev * dev)
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -984,14 +1145,6 @@ void put_pid(struct pid * pid)
 #include <linux/file.h>
 
 void put_unused_fd(unsigned int fd)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/pci.h>
-
-int raw_pci_read(unsigned int domain,unsigned int bus,unsigned int devfn,int reg,int len,u32 * val)
 {
 	lx_emul_trace_and_stop(__func__);
 }

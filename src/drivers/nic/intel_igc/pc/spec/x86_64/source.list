@@ -2,7 +2,6 @@ arch/x86/lib/hweight.S
 arch/x86/lib/memcpy_64.S
 arch/x86/lib/memmove_64.S
 arch/x86/lib/memset_64.S
-arch/x86/pci/legacy.c
 arch/x86/platform/intel/iosf_mbi.c
 drivers/base/bus.c
 drivers/base/class.c
@@ -14,6 +13,10 @@ drivers/base/driver.c
 drivers/base/platform.c
 drivers/base/property.c
 drivers/clk/clk-devres.c
+drivers/dma-buf/dma-fence-array.c
+drivers/dma-buf/dma-fence-chain.c
+drivers/dma-buf/dma-fence.c
+drivers/dma-buf/dma-resv.c
 drivers/net/ethernet/intel/igc/igc_base.c
 drivers/net/ethernet/intel/igc/igc_diag.c
 drivers/net/ethernet/intel/igc/igc_dump.c
@@ -26,19 +29,7 @@ drivers/net/ethernet/intel/igc/igc_phy.c
 drivers/net/ethernet/intel/igc/igc_ptp.c
 drivers/net/ethernet/intel/igc/igc_tsn.c
 drivers/net/ethernet/intel/igc/igc_xdp.c
-drivers/pci/access.c
-drivers/pci/bus.c
-drivers/pci/host-bridge.c
-drivers/pci/msi.c
 drivers/pci/pci-driver.c
-drivers/pci/pci-label.c
-drivers/pci/pci-sysfs.c
-drivers/pci/pci.c
-drivers/pci/probe.c
-drivers/pci/rom.c
-drivers/pci/search.c
-drivers/pci/setup-res.c
-drivers/pci/slot.c
 kernel/async.c
 kernel/irq/chip.c
 kernel/irq/devres.c
@@ -95,7 +86,6 @@ lib/kobject_uevent.c
 lib/kstrtox.c
 lib/list_sort.c
 lib/llist.c
-lib/pci_iomap.c
 lib/radix-tree.c
 lib/rbtree.c
 lib/refcount.c

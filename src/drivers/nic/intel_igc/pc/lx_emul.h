@@ -30,6 +30,10 @@ void lx_backtrace(void);
 
 void lx_emul_time_udelay(unsigned long usec);
 
+unsigned short emul_intel_gmch_control_reg(void);
+
+enum { OPREGION_PSEUDO_PHYS_ADDR = 0xffffefff };
+
 #ifdef __cplusplus
 }
 #endif
