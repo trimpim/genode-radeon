@@ -31,9 +31,32 @@ noinline u64 __bpf_call_base(u64 r1,u64 r2,u64 r3,u64 r4,u64 r5)
 }
 
 
-#include <linux/filter.h>
-
 void __bpf_prog_free(struct bpf_prog * fp)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+u64 bpf_user_rnd_u32(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+u64 bpf_get_raw_cpu_id(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+u64 bpf_event_output(struct bpf_map *map, u64 flags, void *meta, u64 meta_size,
+                     void *ctx, u64 ctx_size, bpf_ctx_copy_t ctx_copy)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+void bpf_jit_compile(struct bpf_prog *fp)
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -356,9 +379,23 @@ void console_unblank(void)
 }
 
 
-#include <asm-generic/checksum.h>
+#include <linux/kernel.h>
 
-__wsum csum_partial(const void * buff,int len,__wsum sum)
+int get_option(char ** str,int * pint)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+char * get_options(const char * str,int nints,int * ints)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+#include <linux/pm_qos.h>
+
+void cpu_latency_qos_add_request(struct pm_qos_request * req,s32 value)
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -704,14 +741,6 @@ bool is_software_node(const struct fwnode_handle * fwnode)
 }
 
 
-#include <linux/fs.h>
-
-struct vfsmount * kern_mount(struct file_system_type * type)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
 #include <linux/kobject.h>
 
 struct kobject *kernel_kobj;
@@ -736,14 +765,6 @@ void kill_fasync(struct fasync_struct ** fp,int sig,int band)
 #include <linux/slab.h>
 
 int kmem_cache_alloc_bulk(struct kmem_cache * s,gfp_t flags,size_t size,void ** p)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/slab.h>
-
-struct kmem_cache * kmem_cache_create_usercopy(const char * name,unsigned int size,unsigned int align,slab_flags_t flags,unsigned int useroffset,unsigned int usersize,void (* ctor)(void *))
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -821,14 +842,6 @@ void migrate_enable(void)
 #include <net/neighbour.h>
 
 const struct nla_policy nda_policy[] = {};
-
-
-#include <net/net_namespace.h>
-
-__init int net_sysctl_init(void)
-{
-	lx_emul_trace_and_stop(__func__);
-}
 
 
 #include <net/netlink.h>
@@ -1112,14 +1125,6 @@ void printk_safe_flush_on_panic(void)
 
 #include <linux/proc_ns.h>
 
-int proc_alloc_inum(unsigned int * inum)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/proc_ns.h>
-
 void proc_free_inum(unsigned int inum)
 {
 	lx_emul_trace_and_stop(__func__);
@@ -1153,14 +1158,6 @@ void put_unused_fd(unsigned int fd)
 #include <linux/reboot.h>
 
 enum reboot_mode reboot_mode;
-
-
-#include <linux/fs.h>
-
-int register_filesystem(struct file_system_type * fs)
-{
-	lx_emul_trace_and_stop(__func__);
-}
 
 
 #include <linux/syscore_ops.h>
@@ -1206,14 +1203,6 @@ void reuseport_detach_sock(struct sock * sk)
 #include <linux/rhashtable.h>
 
 void rhashtable_destroy(struct rhashtable * ht)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/rhashtable-types.h>
-
-int rhashtable_init(struct rhashtable * ht,const struct rhashtable_params * params)
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -1416,6 +1405,12 @@ int suppress_printk;
 #include <linux/rcupdate.h>
 
 void synchronize_rcu(void)
+{
+	lx_emul_trace_and_stop(__func__);
+}
+
+
+void synchronize_rcu_expedited()
 {
 	lx_emul_trace_and_stop(__func__);
 }

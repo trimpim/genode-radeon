@@ -50,7 +50,7 @@ SRC_C   += lx_emul/shadow/drivers/char/random.c
 #SRC_C       += timeout.c
 
 # Genode C-API backends sources
-#SRC_CC  += genode_c_api/uplink.cc
+SRC_CC  += genode_c_api/uplink.cc
 
 # sources from program directory
 vpath %.c  $(REL_PRG_DIR)
