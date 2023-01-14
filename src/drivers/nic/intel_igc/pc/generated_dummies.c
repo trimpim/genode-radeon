@@ -150,14 +150,6 @@ void __put_task_struct(struct task_struct * tsk)
 }
 
 
-#include <linux/rhashtable.h>
-
-struct rhash_lock_head __rcu ** __rht_bucket_nested(const struct bucket_table * tbl,unsigned int hash)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
 #include <net/scm.h>
 
 void __scm_destroy(struct scm_cookie * scm)
@@ -345,14 +337,6 @@ struct bpf_prog * bpf_prog_select_runtime(struct bpf_prog * fp,int * err)
 #include <linux/bpf.h>
 
 void bpf_user_rnd_init_once(void)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/kernel.h>
-
-void bust_spinlocks(int yes)
 {
 	lx_emul_trace_and_stop(__func__);
 }
@@ -860,14 +844,6 @@ int netlink_policy_dump_write_attr(struct sk_buff * skb,const struct nla_policy 
 }
 
 
-#include <linux/fs.h>
-
-struct inode * new_inode_pseudo(struct super_block * sb)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
 #include <net/netlink.h>
 
 struct nlattr * nla_find(const struct nlattr * head,int len,int attrtype)
@@ -1115,14 +1091,6 @@ int printk_deferred(const char * fmt,...)
 }
 
 
-#include <linux/printk.h>
-
-void printk_safe_flush_on_panic(void)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
 #include <linux/proc_ns.h>
 
 void proc_free_inum(unsigned int inum)
@@ -1195,78 +1163,6 @@ int reuseport_detach_prog(struct sock * sk)
 #include <net/sock_reuseport.h>
 
 void reuseport_detach_sock(struct sock * sk)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/rhashtable.h>
-
-void rhashtable_destroy(struct rhashtable * ht)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/rhashtable.h>
-
-void * rhashtable_insert_slow(struct rhashtable * ht,const void * key,struct rhash_head * obj)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/rhashtable.h>
-
-void rhashtable_walk_enter(struct rhashtable * ht,struct rhashtable_iter * iter)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/rhashtable.h>
-
-void rhashtable_walk_exit(struct rhashtable_iter * iter)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/rhashtable.h>
-
-void * rhashtable_walk_next(struct rhashtable_iter * iter)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/rhashtable.h>
-
-int rhashtable_walk_start_check(struct rhashtable_iter * iter)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/rhashtable.h>
-
-void rhashtable_walk_stop(struct rhashtable_iter * iter)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/rhashtable.h>
-
-struct rhash_lock_head __rcu ** rht_bucket_nested(const struct bucket_table * tbl,unsigned int hash)
-{
-	lx_emul_trace_and_stop(__func__);
-}
-
-
-#include <linux/rhashtable.h>
-
-struct rhash_lock_head __rcu ** rht_bucket_nested_insert(struct rhashtable * ht,struct bucket_table * tbl,unsigned int hash)
 {
 	lx_emul_trace_and_stop(__func__);
 }

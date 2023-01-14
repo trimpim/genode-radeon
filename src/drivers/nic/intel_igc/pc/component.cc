@@ -49,8 +49,8 @@ class Intel_igc::Main : private Entrypoint::Io_progress_handler
 	private:
 
 		Env                   &_env;
-		Signal_handler<Main>   _signal_handler { _env.ep(), *this, &Main::_handle_signal };
-//		Sliced_heap            _sliced_heap    { env.ram(), env.rm()  };
+//		Signal_handler<Main>   _signal_handler { _env.ep(), *this, &Main::_handle_signal };
+//		Sliced_heap            _sliced_heap    { _env.ram(), _env.rm() };
 
 		/**
 		 * Entrypoint::Io_progress_handler
@@ -63,7 +63,7 @@ class Intel_igc::Main : private Entrypoint::Io_progress_handler
 		void _handle_signal()
 		{
 //			lx_user_handle_io();
-//			Lx_kit::env().scheduler.schedule();
+			Lx_kit::env().scheduler.schedule();
 		}
 
 	public:
@@ -73,12 +73,12 @@ class Intel_igc::Main : private Entrypoint::Io_progress_handler
 		{
 			log("--- Intel IGC nic driver started ---");
 
-			Lx_kit::initialize(env);
-			env.exec_static_constructors();
+			Lx_kit::initialize(_env);
+			_env.exec_static_constructors();
 
 			lx_emul_start_kernel(nullptr);
 
-			env.ep().register_io_progress_handler(*this);
+			_env.ep().register_io_progress_handler(*this);
 		}
 
 };

@@ -1,7 +1,7 @@
 /*
  * \brief  Array defining order of Linux Kernel initcalls
  * \author Automatically generated file - do no edit
- * \date   2023-01-08
+ * \date   2023-01-14
  */
 
 #pragma once

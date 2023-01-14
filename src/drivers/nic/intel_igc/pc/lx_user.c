@@ -20,7 +20,7 @@
 
 void lx_user_init(void)
 {
-	uplink_init();
+//	uplink_init();
 //	rfkill_init();
 //	socketcall_init();
 }

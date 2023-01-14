@@ -74,6 +74,7 @@ int proc_alloc_inum(unsigned int * inum)
 
 __init int net_sysctl_init(void)
 {
+	printk("%s\n",__func__);
 	return 0;
 }
 
@@ -90,6 +91,8 @@ struct kmem_cache * kmem_cache_create_usercopy(const char * name,unsigned int si
 
 int register_filesystem(struct file_system_type * s)
 {
+	printk("%s  -> name='%s'\n",__func__,s->name);
+//	lx_emul_backtrace();
 	return 0;
 }
 
@@ -98,13 +101,23 @@ int register_filesystem(struct file_system_type * s)
 
 struct vfsmount * kern_mount(struct file_system_type * type)
 {
+	printk("%s  -> name='%s'\n",__func__,type->name);
+//	lx_emul_backtrace();
 	return NULL;
 }
 
 
-#include <linux/rhashtable-types.h>
+#include <linux/kernel.h>
 
-int rhashtable_init(struct rhashtable * ht,const struct rhashtable_params * params)
+void bust_spinlocks(int yes)
 {
-	return 0;
+	printk("%s\n",__func__);
+}
+
+
+#include <linux/printk.h>
+
+void printk_safe_flush_on_panic(void)
+{
+	printk("%s\n",__func__);
 }

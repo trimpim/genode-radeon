@@ -14,11 +14,30 @@
 
 #include <lx_emul.h>
 
+#include <linux/fs.h>
 
 void lx_backtrace(void)
 {
 }
 
-void lx_emul_time_udelay(unsigned long usec)
+
+struct inode * new_inode_pseudo(struct super_block * sb)
 {
+printk("%s()  ::  %d\n",__func__,__LINE__);
+	const struct super_operations *ops = sb->s_op;
+	struct inode *inode;
+
+printk("%s()  ::  %d\n",__func__,__LINE__);
+	if (ops->alloc_inode)
+		inode = ops->alloc_inode(sb);
+
+printk("%s()  ::  %d\n",__func__,__LINE__);
+	if (!inode)
+		return (struct inode*)ERR_PTR(-ENOMEM);
+
+printk("%s()  ::  %d\n",__func__,__LINE__);
+	if (!inode->free_inode)
+		inode->free_inode = ops->free_inode;
+
+	return inode;
 }

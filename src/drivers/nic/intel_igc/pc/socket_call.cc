@@ -17,7 +17,7 @@
 #include <base/log.h>
 
 /* DDE Linux includes */
-#include <wifi/socket_call.h>
+#include <socket_call.h>
 #include <lx_emul/task.h>
 #include <lx_kit/env.h>
 
@@ -127,12 +127,12 @@ static int convert_errno_from_linux(int linux_errno)
 }
 
 
-static_assert((unsigned)Wifi::Msghdr::MAX_IOV_LEN == (unsigned)MAX_IOV_LEN);
+static_assert((unsigned)Intel_igc::Msghdr::MAX_IOV_LEN == (unsigned)MAX_IOV_LEN);
 
 
 
-/* XXX move Wifi::Socket definition to better location */
-struct Wifi::Socket
+/* XXX move Intel_igc::Socket definition to better location */
+struct Intel_igc::Socket
 {
 	void *socket    = nullptr;
 	bool  non_block = false;
@@ -157,7 +157,7 @@ struct Call
 	};
 
 	Opcode        opcode = NONE;
-	Wifi::Socket *handle = nullptr;
+	Intel_igc::Socket *handle = nullptr;
 
 	union {
 		struct
@@ -201,7 +201,7 @@ struct Call
 		} get_mac_address;
 		struct
 		{
-			Wifi::Poll_socket_fd *sockets;
+			Intel_igc::Poll_socket_fd *sockets;
 			unsigned              num;
 			int                   timeout;
 		} poll_all;
@@ -237,7 +237,7 @@ class Lx::Socket
 		Genode::Signal_transmitter         _sender { };
 		Genode::Signal_handler<Lx::Socket> _dispatcher;
 
-		struct socket *_sock_poll_table[Wifi::MAX_POLL_SOCKETS] { };
+		struct socket *_sock_poll_table[Intel_igc::MAX_POLL_SOCKETS] { };
 
 		struct socket *_call_socket()
 		{
@@ -333,7 +333,7 @@ class Lx::Socket
 
 		void _do_poll_all()
 		{
-			Wifi::Poll_socket_fd *sockets = _call.poll_all.sockets;
+			Intel_igc::Poll_socket_fd *sockets = _call.poll_all.sockets;
 			unsigned num                  = _call.poll_all.num;
 			int timeout                   = _call.poll_all.timeout;
 
@@ -358,11 +358,11 @@ class Lx::Socket
 
 					sockets[i].revents = 0;
 					if (result.in)
-						sockets[i].revents |= sockets[i].events & Wifi::WIFI_POLLIN ? Wifi::WIFI_POLLIN : 0;
+						sockets[i].revents |= sockets[i].events & Intel_igc::WIFI_POLLIN ? Intel_igc::WIFI_POLLIN : 0;
 					if (result.out)
-						sockets[i].revents |= sockets[i].events & Wifi::WIFI_POLLOUT ? Wifi::WIFI_POLLOUT : 0;
+						sockets[i].revents |= sockets[i].events & Intel_igc::WIFI_POLLOUT ? Intel_igc::WIFI_POLLOUT : 0;
 					if (result.ex)
-						sockets[i].revents |= sockets[i].events & Wifi::WIFI_POLLEX ? Wifi::WIFI_POLLEX : 0;
+						sockets[i].revents |= sockets[i].events & Intel_igc::WIFI_POLLEX ? Intel_igc::WIFI_POLLEX : 0;
 
 					if (sockets[i].revents)
 						nready++;
@@ -490,7 +490,7 @@ void wifi_kick_socketcall()
  ** Socket_call instance **
  **************************/
 
-Wifi::Socket_call socket_call;
+Intel_igc::Socket_call socket_call;
 
 
 /***************************
@@ -498,7 +498,7 @@ Wifi::Socket_call socket_call;
  ***************************/
 
 
-Wifi::Socket *Socket_call::socket(int domain, int type, int protocol)
+Intel_igc::Socket *Intel_igc::Socket_call::socket(int domain, int type, int protocol)
 {
 	/* FIXME domain, type, protocol values */
 	_call.opcode          = Call::SOCKET;
@@ -511,13 +511,13 @@ Wifi::Socket *Socket_call::socket(int domain, int type, int protocol)
 	if (_call.socket.result == 0)
 		return 0;
 
-	Wifi::Socket *s = new (Lx_kit::env().heap) Wifi::Socket(_call.socket.result);
+	Intel_igc::Socket *s = new (Lx_kit::env().heap) Intel_igc::Socket(_call.socket.result);
 
 	return s;
 }
 
 
-int Socket_call::close(Socket *s)
+int Intel_igc::Socket_call::close(Socket *s)
 {
 	_call.opcode = Call::CLOSE;
 	_call.handle = s;
@@ -532,7 +532,7 @@ int Socket_call::close(Socket *s)
 }
 
 
-int Socket_call::bind(Socket *s, Wifi::Sockaddr const *addr, unsigned addrlen)
+int Intel_igc::Socket_call::bind(Socket *s, Intel_igc::Sockaddr const *addr, unsigned addrlen)
 {
 	/* FIXME convert to/from Sockaddr */
 	_call.opcode       = Call::BIND;
@@ -546,7 +546,7 @@ int Socket_call::bind(Socket *s, Wifi::Sockaddr const *addr, unsigned addrlen)
 }
 
 
-int Socket_call::getsockname(Socket *s, Wifi::Sockaddr *addr, unsigned *addrlen)
+int Intel_igc::Socket_call::getsockname(Socket *s, Intel_igc::Sockaddr *addr, unsigned *addrlen)
 {
 	/* FIXME convert to/from Sockaddr */
 	/* FIXME unsigned * -> int * */
@@ -561,7 +561,7 @@ int Socket_call::getsockname(Socket *s, Wifi::Sockaddr *addr, unsigned *addrlen)
 }
 
 
-int Socket_call::poll_all(Poll_socket_fd *s, unsigned num, int timeout)
+int Intel_igc::Socket_call::poll_all(Poll_socket_fd *s, unsigned num, int timeout)
 {
 	_call.opcode = Call::POLL_ALL;
 	_call.handle = 0;
@@ -575,12 +575,12 @@ int Socket_call::poll_all(Poll_socket_fd *s, unsigned num, int timeout)
 }
 
 
-static inline int msg_flags(Wifi::Flags in)
+static inline int msg_flags(Intel_igc::Flags in)
 {
-	int out = Wifi::WIFI_F_NONE;
-	if (in & Wifi::WIFI_F_MSG_ERRQUEUE)
+	int out = Intel_igc::WIFI_F_NONE;
+	if (in & Intel_igc::WIFI_F_MSG_ERRQUEUE)
 		out |= MSG_ERRQUEUE;
-	if (in & Wifi::WIFI_F_MSG_DONTWAIT) {
+	if (in & Intel_igc::WIFI_F_MSG_DONTWAIT) {
 		out |= MSG_DONTWAIT;
 	}
 
@@ -588,7 +588,7 @@ static inline int msg_flags(Wifi::Flags in)
 };
 
 
-Wifi::ssize_t Socket_call::recvmsg(Socket *s, Wifi::Msghdr *msg, Wifi::Flags flags)
+Intel_igc::ssize_t Intel_igc::Socket_call::recvmsg(Socket *s, Intel_igc::Msghdr *msg, Intel_igc::Flags flags)
 {
 	_call.opcode                       = Call::RECVMSG;
 	_call.handle                       = s;
@@ -613,7 +613,7 @@ Wifi::ssize_t Socket_call::recvmsg(Socket *s, Wifi::Msghdr *msg, Wifi::Flags fla
 }
 
 
-Wifi::ssize_t Socket_call::sendmsg(Socket *s, Wifi::Msghdr const *msg, Wifi::Flags flags)
+Intel_igc::ssize_t Intel_igc::Socket_call::sendmsg(Socket *s, Intel_igc::Msghdr const *msg, Intel_igc::Flags flags)
 {
 	_call.opcode                       = Call::SENDMSG;
 	_call.handle                       = s;
@@ -636,34 +636,34 @@ Wifi::ssize_t Socket_call::sendmsg(Socket *s, Wifi::Msghdr const *msg, Wifi::Fla
 }
 
 
-static int sockopt_level(Sockopt_level const in)
+static int sockopt_level(Intel_igc::Sockopt_level const in)
 {
 	switch (in) {
-	case Wifi::WIFI_SOL_SOCKET:  return SOL_SOCKET;
-	case Wifi::WIFI_SOL_NETLINK: return SOL_NETLINK;
+	case Intel_igc::WIFI_SOL_SOCKET:  return SOL_SOCKET;
+	case Intel_igc::WIFI_SOL_NETLINK: return SOL_NETLINK;
 	}
 
 	return -1;
 }
 
 
-static int sockopt_name(Sockopt_level const level, Sockopt_name const in)
+static int sockopt_name(Intel_igc::Sockopt_level const level, Intel_igc::Sockopt_name const in)
 {
 	switch (level) {
-	case Wifi::WIFI_SOL_SOCKET:
+	case Intel_igc::WIFI_SOL_SOCKET:
 		switch (in) {
-		case Wifi::WIFI_SO_SNDBUF:      return SO_SNDBUF;
-		case Wifi::WIFI_SO_RCVBUF:      return SO_RCVBUF;
-		case Wifi::WIFI_SO_PASSCRED:    return SO_PASSCRED;
-		case Wifi::WIFI_SO_WIFI_STATUS: return SO_WIFI_STATUS;
+		case Intel_igc::WIFI_SO_SNDBUF:      return SO_SNDBUF;
+		case Intel_igc::WIFI_SO_RCVBUF:      return SO_RCVBUF;
+		case Intel_igc::WIFI_SO_PASSCRED:    return SO_PASSCRED;
+		case Intel_igc::WIFI_SO_WIFI_STATUS: return SO_WIFI_STATUS;
 
 		default: return -1;
 		}
-	case Wifi::WIFI_SOL_NETLINK:
+	case Intel_igc::WIFI_SOL_NETLINK:
 		switch (in) {
-		case Wifi::WIFI_NETLINK_ADD_MEMBERSHIP:  return NETLINK_ADD_MEMBERSHIP;
-		case Wifi::WIFI_NETLINK_DROP_MEMBERSHIP: return NETLINK_DROP_MEMBERSHIP;
-		case Wifi::WIFI_NETLINK_PKTINFO:         return NETLINK_PKTINFO;
+		case Intel_igc::WIFI_NETLINK_ADD_MEMBERSHIP:  return NETLINK_ADD_MEMBERSHIP;
+		case Intel_igc::WIFI_NETLINK_DROP_MEMBERSHIP: return NETLINK_DROP_MEMBERSHIP;
+		case Intel_igc::WIFI_NETLINK_PKTINFO:         return NETLINK_PKTINFO;
 
 		default: return -1;
 		}
@@ -673,8 +673,8 @@ static int sockopt_name(Sockopt_level const level, Sockopt_name const in)
 }
 
 
-int Socket_call::setsockopt(Socket *s,
-                            Wifi::Sockopt_level level, Wifi::Sockopt_name optname,
+int Intel_igc::Socket_call::setsockopt(Socket *s,
+                            Intel_igc::Sockopt_level level, Intel_igc::Sockopt_name optname,
                             const void *optval, unsigned optlen)
 {
 	/* FIXME optval values */
@@ -691,7 +691,7 @@ int Socket_call::setsockopt(Socket *s,
 }
 
 
-void Socket_call::non_block(Socket *s, bool value)
+void Intel_igc::Socket_call::non_block(Socket *s, bool value)
 {
 	_call.opcode          = Call::NON_BLOCK;
 	_call.handle          = s;
@@ -701,7 +701,7 @@ void Socket_call::non_block(Socket *s, bool value)
 }
 
 
-void Socket_call::get_mac_address(unsigned char *addr)
+void Intel_igc::Socket_call::get_mac_address(unsigned char *addr)
 {
 	_call.opcode               = Call::GET_MAC_ADDRESS;
 	_call.handle               = 0;

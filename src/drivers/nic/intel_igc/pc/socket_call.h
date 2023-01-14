@@ -1,6 +1,7 @@
 /*
  * \brief  Socket interface for calling the Linux WIFI stack
  * \author Josef Soentgen
+ * \author Pirmin Duss
  * \date   2012-08-02
  */
 
@@ -15,7 +16,7 @@
 #define _WIFI__SOCKET_CALL_H_
 
 
-namespace Wifi {
+namespace Intel_igc {
 	struct Socket;
 	struct Sockaddr;
 	struct Msghdr;
@@ -58,8 +59,8 @@ namespace Wifi {
 }
 
 
-struct Wifi::Sockaddr { };
-struct Wifi::Msghdr
+struct Intel_igc::Sockaddr { };
+struct Intel_igc::Msghdr
 {
 	enum { MAX_IOV_LEN = 8 };
 
@@ -78,7 +79,7 @@ struct Wifi::Msghdr
 	unsigned  msg_controllen;
 };
 
-struct Wifi::Socket_call
+struct Intel_igc::Socket_call
 {
 	Socket* socket(int domain, int type, int protocol);
 	int close(Socket *);
@@ -99,7 +100,7 @@ struct Wifi::Socket_call
 	void get_mac_address(unsigned char *addr);
 };
 
-struct Wifi::Poll_socket_fd
+struct Intel_igc::Poll_socket_fd
 {
 	Socket *s;
 	void   *pfd;
