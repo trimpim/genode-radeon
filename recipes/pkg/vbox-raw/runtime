@@ -6,6 +6,7 @@
 		<block/>
 		<file_system label="shared"/>
 		<file_system label="vm"/>
+		<gpu/>
 		<gui/>
 		<nic/>
 		<report label="clipboard"/>
@@ -13,6 +14,7 @@
 		<rm/>
 		<rom label="capslock"/>
 		<rom label="clipboard"/>
+		<rom label="mesa_gpu_drv.lib.so"/>
 		<rom label="platform_info"/>
 		<rom label="usb_devices"/>
 		<rtc/>
@@ -22,12 +24,14 @@
 	</requires>
 
 	<content>
+		<rom label="egl.lib.so"/>
 		<rom label="expat.lib.so"/>
 		<rom label="glapi.lib.so"/>
+		<rom label="ld.lib.so"/>
 		<rom label="init"/>
 		<rom label="init.config"/>
+		<rom label="virtualbox6"/>
 		<rom label="jpeg.lib.so"/>
-		<rom label="ld.lib.so"/>
 		<rom label="libc.lib.so"/>
 		<rom label="libdrm.lib.so"/>
 		<rom label="libiconv.lib.so"/>
@@ -40,7 +44,6 @@
 		<rom label="vfs_gpu.lib.so"/>
 		<rom label="vfs_oss.lib.so"/>
 		<rom label="vfs_pipe.lib.so"/>
-		<rom label="virtualbox6"/>
 		<rom label="virtualbox6-shaderlib.lib.so"/>
 		<rom label="virtualbox6-sharedclipboard.lib.so"/>
 		<rom label="virtualbox6-sharedfolders.lib.so"/>
