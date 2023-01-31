@@ -1,8 +1,10 @@
-<runtime ram="4300M" caps="7500" binary="init" config="init.config">
+<runtime ram="7G" caps="7500" binary="init" config="init.config">
 
 	<requires>
 		<audio_in/>
 		<audio_out/>
+		<block label="sda"/>
+		<block label="sdb"/>
 		<block/>
 		<file_system label="shared"/>
 		<file_system label="vm"/>
@@ -24,14 +26,15 @@
 	</requires>
 
 	<content>
+		<rom label="disk1.vmdk"/>
+		<rom label="disk2.vmdk"/>
 		<rom label="egl.lib.so"/>
 		<rom label="expat.lib.so"/>
 		<rom label="glapi.lib.so"/>
-		<rom label="ld.lib.so"/>
 		<rom label="init"/>
 		<rom label="init.config"/>
-		<rom label="virtualbox6"/>
 		<rom label="jpeg.lib.so"/>
+		<rom label="ld.lib.so"/>
 		<rom label="libc.lib.so"/>
 		<rom label="libdrm.lib.so"/>
 		<rom label="libiconv.lib.so"/>
@@ -44,6 +47,7 @@
 		<rom label="vfs_gpu.lib.so"/>
 		<rom label="vfs_oss.lib.so"/>
 		<rom label="vfs_pipe.lib.so"/>
+		<rom label="virtualbox6"/>
 		<rom label="virtualbox6-shaderlib.lib.so"/>
 		<rom label="virtualbox6-sharedclipboard.lib.so"/>
 		<rom label="virtualbox6-sharedfolders.lib.so"/>
