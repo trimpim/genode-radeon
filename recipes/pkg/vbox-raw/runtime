@@ -1,14 +1,18 @@
 <runtime ram="7G" caps="7500" binary="init" config="init.config">
 
 	<requires>
+		<!--
 		<audio_in/>
 		<audio_out/>
-		<block label="sda"/>
-		<block label="sdb"/>
+		-->
+		<block label="block0"/>
+		<block label="block1"/>
 		<block/>
 		<file_system label="shared"/>
 		<file_system label="vm"/>
+		<!--
 		<gpu/>
+		-->
 		<gui/>
 		<nic/>
 		<report label="clipboard"/>
