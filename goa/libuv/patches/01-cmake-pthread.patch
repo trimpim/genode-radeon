@@ -1,0 +1,10 @@
++++ src/CMakeLists.txt	2023-02-01 13:36:45.486032394 +0100
+@@ -175,7 +175,7 @@
+     # TODO: This should be replaced with find_package(Threads) if possible
+     # Android has pthread as part of its c library, not as a separate
+     # libpthread.so.
+-    list(APPEND uv_libraries pthread)
++	#list(APPEND uv_libraries pthread)
+   endif()
+   list(APPEND uv_sources
+        src/unix/async.c

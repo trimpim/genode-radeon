@@ -1,0 +1,14 @@
+LICENSE    := MIT
+VERSION    := v1.44.2
+
+DOWNLOADS  := libuv.archive
+
+URL(libuv) := https://github.com/libuv/libuv/archive/refs/tags/$(VERSION).tar.gz
+DIR(libuv) := src
+SHA(libuv) := e6e2ba8b4c349a4182a33370bb9be5e23c51b32efb9b9e209d0e8556b73a48da
+
+PATCHES    += patches/01-cmake-pthread.patch
+PATCHES    += patches/02-cmake-genode.patch
+PATCHES    += patches/03-cmake-copy_include.patch
+
+# vim: ft=make

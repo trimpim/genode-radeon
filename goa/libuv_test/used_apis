@@ -1,0 +1,5 @@
+trimpim/api/base
+trimpim/api/libc
+trimpim/api/libuv
+trimpim/api/posix
+trimpim/api/so

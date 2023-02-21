@@ -1,0 +1,11 @@
++++ src/CMakeLists.txt	2023-02-21 11:59:23.502651883 +0100
+@@ -713,3 +713,9 @@
+       C compiler:    ${CMAKE_C_COMPILER} (${CMAKE_C_COMPILER_ID})
+       CFLAGS:        ${CMAKE_C_FLAGS_${_build_type}} ${CMAKE_C_FLAGS}
+ ")
++
++file(COPY include
++    DESTINATION .
++    FILES_MATCHING
++        PATTERN *
++)
