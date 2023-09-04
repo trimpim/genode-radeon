@@ -8,6 +8,7 @@ lappend depot_packages [depot_user]/src/acpi_drv
 lappend depot_packages [depot_user]/src/init
 lappend depot_packages [depot_user]/src/platform_drv
 lappend depot_packages [depot_user]/src/report_rom
+lappend depot_packages [depot_user]/src/nic_router
 
 
 import_from_depot $depot_packages
@@ -77,8 +78,13 @@ set config {
 		<config devices="config">
 			<report pci="yes" config="yes" devices="yes"/>
 			<policy label="nic_drv -> ">
+				<!--
 				<pci class="ETHERNET"/>
-				<pci vendor="0x8086" device="0x43ed"/>
+				-->
+				<!--
+				<pci vendor="0x8086" device="0x15f3"/>
+				-->
+				<device name="04:00.0"/>
 			</policy>
 		</config>
 		<route>
@@ -102,10 +108,49 @@ set config {
 
 	<start name="nic_drv" caps="300">
 		<binary name="pc_intel_igc_nic_drv"/>
-		<resource name="RAM" quantum="8M"/>
-		<config ld_verbose="yes"/>
+		<resource name="RAM" quantum="16M"/>
+		<config ld_verbose="yes">
+			<report mac_address="yes"/>
+		</config>
 		<route>
+			<service name="Uplink"> <child name="nic_router"/> </service>
 			<service name="Platform"> <child name="platform_drv"/> </service>
+			<service name="Report"> <child name="report_rom"/> </service>
+			<service name="Timer"> <child name="timer"/> </service>
+			<any-service> <parent/> </any-service>
+		</route>
+	</start>
+
+	<start name="nic_router" caps="300">
+		<resource name="RAM" quantum="8M"/>
+		<provides>
+			<service name="Nic"/>
+			<service name="Uplink"/>
+		</provides>
+		<config verbose_domain_state="yes"
+		        verbose_packet_drop="no"
+		        verbose_packets="no">
+		
+			<report bytes="no"
+			        stats="no"
+			        dropped_fragm_ipv4="no"
+			        quota="no"
+			        config="yes"
+			        config_triggers="no"
+			        link_state="yes"
+			        link_state_triggers="yes"
+			        interval_sec="600"/>
+
+			<domain name="igc">
+				<!--
+				<nat domain="downlink" udp-ports="100" tcp-ports="100" icmp-ids="100"/>
+				-->
+			</domain>
+
+			<policy label="nic_drv -> eth0" domain="igc"/>
+		</config>
+		<route>
+			<service name="Report"> <child name="report_rom"/> </service>
 			<service name="Timer"> <child name="timer"/> </service>
 			<any-service> <parent/> </any-service>
 		</route>
@@ -118,10 +163,7 @@ set config {
 install_config $config
 
 
-build_boot_image {
-	pc_intel_igc_nic_drv
-	pci_decode
-}
+build_boot_image [build_artifacts]
 
 
 run_genode_until forever

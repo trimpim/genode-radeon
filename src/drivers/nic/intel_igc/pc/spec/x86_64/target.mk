@@ -1,3 +1,5 @@
-REQUIRES += 64bit
+REQUIRES := x86_64
 
-include $(REP_DIR)/src/drivers/nic/intel_igc/pc/target.inc
+INC_DIR += $(REP_DIR)/../dde_linux/src/include/spec/x86_64
+
+include $(PRG_DIR)/../../target.inc
