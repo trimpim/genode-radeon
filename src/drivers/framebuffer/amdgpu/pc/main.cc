@@ -28,7 +28,7 @@
 
 /* local includes */
 extern "C" {
-	#include "lx_radeon.h"
+#include "lx_i915.h"
 }
 
 
@@ -46,12 +46,17 @@ struct Framebuffer::Driver
 	Env                    &env;
 	Timer::Connection       timer    { env };
 	Attached_rom_dataspace  config   { env, "config" };
-	Reporter                reporter { env, "connectors" };
+	Expanding_reporter      reporter { env, "connectors", "connectors" };
 
 	Signal_handler<Driver>  config_handler { env.ep(), *this,
 	                                        &Driver::config_update };
 	Signal_handler<Driver>  timer_handler  { env.ep(), *this,
 	                                        &Driver::handle_timer };
+	Signal_handler<Driver>  scheduler_handler { env.ep(), *this,
+	                                           &Driver::handle_scheduler };
+
+	bool                    update_in_progress { false };
+	bool                    new_config_rom     { false };
 
 	class Fb
 	{
@@ -106,9 +111,14 @@ struct Framebuffer::Driver
 		if (fb.constructed()) { fb->paint(); }
 	}
 
+	void handle_scheduler()
+	{
+		Lx_kit::env().scheduler.execute();
+	}
+
 	Driver(Env &env) : env(env)
 	{
-		Lx_kit::initialize(env);
+		Lx_kit::initialize(env, scheduler_handler);
 		env.exec_static_constructors();
 
 		config.sigh(config_handler);
@@ -123,6 +133,38 @@ struct Framebuffer::Driver
 		timer.sigh(timer_handler);
 		timer.trigger_periodic(20*1000);
 	}
+
+	void report_updated()
+	{
+		bool apply_config = true;
+
+		if (config.valid())
+			apply_config = config.xml().attribute_value("apply_on_hotplug", apply_config);
+
+		/* trigger re-read config on connector change */
+		if (apply_config)
+			Genode::Signal_transmitter(config_handler).submit();
+	}
+
+	template <typename T>
+	void with_max_enforcement(T const &fn) const
+	{
+		unsigned max_width  = config.xml().attribute_value("max_width", 0u);
+		unsigned max_height = config.xml().attribute_value("max_height",0u);
+
+		if (max_width && max_height)
+			fn(max_width, max_height);
+	}
+
+	template <typename T>
+	void with_force(T const &fn) const
+	{
+		unsigned force_width  = config.xml().attribute_value("force_width",  0u);
+		unsigned force_height = config.xml().attribute_value("force_height", 0u);
+
+		if (force_width && force_height)
+			fn(force_width, force_height);
+	}
 };
 
 
@@ -136,8 +178,13 @@ void Framebuffer::Driver::config_update()
 	if (!config.valid() || !lx_user_task)
 		return;
 
+	if (update_in_progress)
+		new_config_rom = true;
+	else
+		update_in_progress = true;
+
 	lx_emul_task_unblock(lx_user_task);
-	Lx_kit::env().scheduler.schedule();
+	Lx_kit::env().scheduler.execute();
 }
 
 
@@ -148,39 +195,46 @@ static Framebuffer::Driver & driver(Genode::Env & env)
 }
 
 
-void Framebuffer::Driver::generate_report(void * /*lx_data*/)
+void Framebuffer::Driver::generate_report(void *lx_data)
 {
+	if (!config.valid())
+		return;
+
 	/* check for report configuration option */
-	try {
-		reporter.enabled(config.xml().sub_node("report")
-		                 .attribute_value(reporter.name().string(), false));
-	} catch (...) {
-		Genode::warning("Failed to enable report");
-		reporter.enabled(false);
-	}
+	config.xml().with_optional_sub_node("report", [&](auto const &node) {
 
-	if (!reporter.enabled()) return;
+		if (!node.attribute_value("connectors", false))
+			return;
 
-	try {
-		Genode::Reporter::Xml_generator xml(reporter, [&] ()
-		{
-// FIXME
-//			lx_emul_i915_report(lx_data, &xml);
+		reporter.generate([&] (Genode::Xml_generator &xml) {
+			/* reflect force/max enforcement in report for user clarity */
+			with_max_enforcement([&](unsigned width, unsigned height) {
+				xml.attribute("max_width",  width);
+				xml.attribute("max_height", height);
+			});
+
+			with_force([&](unsigned width, unsigned height) {
+				xml.attribute("force_width",  width);
+				xml.attribute("force_height", height);
+			});
+
+			lx_emul_i915_report(lx_data, &xml);
 		});
-	} catch (...) {
-		Genode::warning("Failed to generate report");
-	}
+
+		driver(Lx_kit::env().env).report_updated();
+	});
 }
 
 
 void Framebuffer::Driver::lookup_config(char const * const name,
                                         struct genode_mode &mode)
 {
+	/* default settings, possibly overridden by explicit configuration below */
+	mode.enabled    = true;
+	mode.brightness = 70 /* percent */;
+
 	if (!config.valid())
 		return;
-
-	unsigned force_width  = config.xml().attribute_value("force_width",  0u);
-	unsigned force_height = config.xml().attribute_value("force_height", 0u);
 
 	/* iterate independently of force* ever to get brightness and hz */
 	config.xml().for_each_sub_node("connector", [&] (Xml_node &node) {
@@ -202,13 +256,18 @@ void Framebuffer::Driver::lookup_config(char const * const name,
 		mode.id     = node.attribute_value("mode_id", 0U);
 	});
 
-	/* enforce forced width/height if configured */
-	mode.preferred = force_width && force_height;
-	if (mode.preferred) {
-		mode.width  = force_width;
-		mode.height = force_height;
-		mode.id     = 0;
-	}
+	mode.preferred = false;
+	with_force([&](unsigned const width, unsigned const height) {
+		mode.preferred = true;
+		mode.width     = width;
+		mode.height    = height;
+		mode.id        = 0;
+	});
+
+	with_max_enforcement([&](unsigned const width, unsigned const height) {
+		mode.max_width  = width;
+		mode.max_height = height;
+	});
 }
 
 
@@ -253,11 +312,11 @@ extern "C" void lx_emul_i915_hotplug_connector(void *data)
 }
 
 
-void lx_emul_i915_report_connector(void * /*lx_data*/, void * genode_xml,
+void lx_emul_i915_report_connector(void * lx_data, void * genode_xml,
                                    char const *name, char const connected,
                                    unsigned brightness)
 {
-	auto &xml = *reinterpret_cast<Genode::Reporter::Xml_generator *>(genode_xml);
+	auto &xml = *reinterpret_cast<Genode::Xml_generator *>(genode_xml);
 
 	xml.node("connector", [&] ()
 	{
@@ -268,11 +327,8 @@ void lx_emul_i915_report_connector(void * /*lx_data*/, void * genode_xml,
 		if (brightness <= MAX_BRIGHTNESS)
 			xml.attribute("brightness", brightness);
 
-//		lx_emul_i915_iterate_modes(lx_data, &xml);
+		lx_emul_i915_iterate_modes(lx_data, &xml);
 	});
-
-	/* re-read config on connector change */
-	Genode::Signal_transmitter(driver(Lx_kit::env().env).config_handler).submit();
 }
 
 
@@ -281,7 +337,7 @@ void lx_emul_i915_report_modes(void * genode_xml, struct genode_mode *mode)
 	if (!genode_xml || !mode)
 		return;
 
-	auto &xml = *reinterpret_cast<Genode::Reporter::Xml_generator *>(genode_xml);
+	auto &xml = *reinterpret_cast<Genode::Xml_generator *>(genode_xml);
 
 	xml.node("mode", [&] ()
 	{
@@ -290,6 +346,8 @@ void lx_emul_i915_report_modes(void * genode_xml, struct genode_mode *mode)
 		xml.attribute("hz",        mode->hz);
 		xml.attribute("mode_id",   mode->id);
 		xml.attribute("mode_name", mode->name);
+		if (!mode->enabled)
+			xml.attribute("unavailable", true);
 		if (mode->preferred)
 			xml.attribute("preferred", true);
 	});
@@ -303,6 +361,20 @@ void lx_emul_i915_connector_config(char * name, struct genode_mode * mode)
 
 	Genode::Env &env = Lx_kit::env().env;
 	driver(env).lookup_config(name, *mode);
+}
+
+
+int lx_emul_i915_config_done_and_block(void)
+{
+	auto &state = driver(Lx_kit::env().env);
+
+	bool const new_config = state.new_config_rom;
+
+	state.update_in_progress = false;
+	state.new_config_rom     = false;
+
+	/* true if linux task should block, otherwise continue due to new config */
+	return !new_config;
 }
 
 
