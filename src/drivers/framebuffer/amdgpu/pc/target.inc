@@ -7,26 +7,27 @@ TARGET      := amdgpu_fb_drv
 LIBS        := base pc_lx_emul blit
 
 INC_DIR     += $(REL_PRG_DIR)
-INC_DIR     += $(REL_PRG_DIR)/shadow
+#INC_DIR     += $(REL_PRG_DIR)/shadow
 
 SRC_CC      += main.cc
-SRC_CC      += misc.cc
-SRC_CC      += time.cc
 SRC_CC      += emul.cc
 SRC_C       += dummies.c
+SRC_C       += pci.c
 SRC_C       += lx_emul.c
 SRC_C       += $(notdir $(wildcard $(REL_PRG_DIR)/generated_dummies.c))
 SRC_C       += fb.c
 SRC_C       += lx_user.c
 SRC_C       += gem.c
 SRC_C       += timeout.c
-SRC_C       += common_dummies.c
-SRC_C       += lx_emul/spec/x86/pci.c
+SRC_C       += lx_emul/common_dummies.c
 SRC_C       += lx_emul/shadow/mm/page_alloc.c
+SRC_C       += lx_emul/shadow/drivers/char/random.c
 
-vpath %.c $(REL_PRG_DIR)
+vpath %.c  $(REL_PRG_DIR)
 vpath %.cc $(REL_PRG_DIR)
-vpath common_dummies.c $(REP_DIR)/../pc/src/lib/pc/lx_emul
+
+vpath %.c  $(PC_DIR)/src/lib/pc
+vpath %.cc $(PC_DIR)/src/lib/pc
 
 LX_SRC_DIR := $(call select_from_ports,linux)/src/linux
 ifeq ($(wildcard $(LX_SRC_DIR)),)
@@ -36,35 +37,17 @@ ifeq ($(wildcard $(LX_SRC_DIR)),)
 fail
 endif
 
-INC_DIR    += $(LX_SRC_DIR)/arch/x86/include/
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/acp/include
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/amdgpu
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/amdkfd
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/amdgpu_dm
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/dc
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/dc/inc
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/dc/inc/hw
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/dmub/inc
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/include
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/modules/hdcp
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/display/modules/inc
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/include
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/include/asic_reg
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/pm/inc
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/pm/powerplay/hwmgr
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/pm/swsmu/smu11
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/pm/swsmu/smu12
-INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/amd/pm/swsmu/smu13
-
-CC_C_OPT   += -Wno-unused-label -fshort-wchar -DCONFIG_MTRR -DCONFIG_X86_PAT -DCONFIG_X86_64
-CC_OPT     := $(CC_C_OPT)
+#INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm/i915
+INC_DIR    += $(LX_SRC_DIR)/drivers/gpu/drm
 
 #
-# Original symbol is renamed to __real_* and references to original symbol
-# are replaced by __wrap_*. Used to shadow schedule_timeout, see timeout.c
-#
-LD_OPT     += --wrap=schedule_timeout
+# The generated dummies file pulls in functions without header
+# includes so we force the inclusion of i915_drv explicitly for
+# this compilation unit.
+# 
+#CC_OPT_generated_dummies += -include $(LX_SRC_DIR)/drivers/gpu/drm/i915/i915_drv.h
+
+CC_C_OPT += -Wno-unused-label
 
 #
 # Genode C-API backends
