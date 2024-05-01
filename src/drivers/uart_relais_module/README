@@ -1,0 +1,9 @@
+
+     Driver for RS485 relais board
+
+
+Based on: https://github.com/Erriez/R421A08-rs485-8ch-relay-board
+
+
+https://mediawiki.compulab.com/w/index.php?title=IOT-GATE-iMX8_and_SBC-IOT-iMX8:_Debian_Linux:_How-To_Guide#RS485
+https://www.compulab.com/wp-content/uploads/2020/06/iot-gate-imx8_reference-guide_2023-02-06.pdf
